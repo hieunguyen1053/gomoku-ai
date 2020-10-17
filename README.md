@@ -1,4 +1,4 @@
-# caro
+# Gomoku
 
 Để cài thư viện
 
