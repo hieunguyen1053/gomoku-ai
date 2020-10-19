@@ -6,7 +6,7 @@
 
 Tuỳ chọn game
 
-`game = GomokuUI("Gomoku", 12, GomokuUI.PVC)` để chơi Person vs Person.
+`game = GomokuUI("Gomoku", 12, GomokuUI.PVP)` để chơi Person vs Person.
 
 `game = GomokuUI("Gomoku", 12, GomokuUI.PVC)` để chơi Person vs Computer.
 
