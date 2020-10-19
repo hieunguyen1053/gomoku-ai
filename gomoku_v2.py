@@ -100,19 +100,6 @@ class Board:
                     if self.matrix[i+1][j] > 0:
                         moves.append((i, j))
                         continue
-
-        def heuristic_sort(matrix, move):
-            x, y = move
-            count = 0
-            size = matrix.shape[0]
-            for i in [-1, 0, 1]:
-                for j in [-1, 0, 1]:
-                    if 0 <= x+i < size and 0 <= y+j < size:
-                        if matrix[x+i][y+j] != 0:
-                            count += 1
-            return count
-
-        moves = sorted(moves, key=lambda move: heuristic_sort(self.matrix, move), reverse=True)
         return moves
 
     def draw(self, move, is_black):
@@ -197,56 +184,38 @@ class Engine:
         cls.__get_patterns_row(board, pattern_dict, is_black)
         cls.__get_patterns_col(board, pattern_dict, is_black)
         cls.__get_patterns_diagonal(board, pattern_dict, is_black)
-        return cls.get_consecutive_score(pattern_dict, is_black == is_black_turn)
+        return cls.get_consecutive_score(pattern_dict)
 
     @classmethod
-    def get_consecutive_score(cls, pattern_dict, current_turn):
+    def get_consecutive_score(cls, pattern_dict):
         score = 0
         for pattern in pattern_dict:
             if pattern.count('X') == 5:
                 if pattern[0] == 'O' and pattern[-1] == 'O':
                     pass
                 else:
-                    score += 100000000
+                    score += 100000
             if pattern.count('X') == 4:
                 if pattern[0] == 'O' and pattern[-1] == 'O':
                     pass
                 elif pattern[0] == 'O' or pattern[-1] == 'O':
-                    if current_turn:
-                        score += 750000 * pattern_dict[pattern]
-                    else:
-                        score += 250 * pattern_dict[pattern]
+                    score += 5000 * pattern_dict[pattern]
                 else:
-                    if current_turn:
-                        score += 100000000
-                    else:
-                        score += 250000 * pattern_dict[pattern]
+                    score += 10000 * pattern_dict[pattern]
             if pattern.count('X') == 3:
                 if pattern[0] == 'O' and pattern[-1] == 'O':
                     pass
                 elif pattern[0] == 'O' or pattern[-1] == 'O':
-                    if current_turn:
-                        score += 10 * pattern_dict[pattern]
-                    else:
-                        score += 5 * pattern_dict[pattern]
+                    score += 500 * pattern_dict[pattern]
                 else:
-                    if current_turn:
-                        score += 50000 * pattern_dict[pattern]
-                    else:
-                        score += 200 * pattern_dict[pattern]
+                    score += 1000 * pattern_dict[pattern]
             if pattern.count('X') == 2:
                 if pattern[0] == 'O' and pattern[-1] == 'O':
                     pass
                 elif pattern[0] == 'O' or pattern[-1] == 'O':
-                    if current_turn:
-                        score += 3 * pattern_dict[pattern]
-                    else:
-                        score += 1 * pattern_dict[pattern]
+                    score += 50 * pattern_dict[pattern]
                 else:
-                    if current_turn:
-                        score += 10 * pattern_dict[pattern]
-                    else:
-                        score += 5 * pattern_dict[pattern]
+                    score += 100 * pattern_dict[pattern]
             if pattern.count('X') == 1:
                 if pattern[0] == 'O' and pattern[-1] == 'O':
                     pass
@@ -278,14 +247,30 @@ class Engine:
         return move
 
     @classmethod
+    def heuristic_sort(cls, board, all_moves):
+        def my_func(board, move):
+            x, y = move
+            count = 0
+            size = board.size
+            for i in [-1, 0, 1]:
+                for j in [-1, 0, 1]:
+                    if 0 <= x+i < size and 0 <= y+j < size:
+                        if board.matrix[x+i][y+j] != 0:
+                            count += 1
+            return count
+
+        return sorted(all_moves, key=lambda move: my_func(board, move), reverse=True)
+
+    @classmethod
     def minimax_alphabeta(cls, board: Board, depth, alpha, beta, is_max):
         if depth == 0:
-            return cls.evaluate_board(board, not is_max), None
+            return (cls.evaluate_board(board, not is_max), None)
 
         all_possible_moves = board.generate_moves()
+        all_possible_moves = cls.heuristic_sort(board, all_possible_moves)
 
         if len(all_possible_moves) == 0:
-            return cls.evaluate_board(board, not is_max), None
+            return (cls.evaluate_board(board, not is_max), None)
 
         best_move = None
 
@@ -298,7 +283,7 @@ class Engine:
                 if value > alpha:
                     alpha = value
                 if value >= beta:
-                    return value, temp_move
+                    return (value, temp_move)
                 if value > best_value:
                     best_value = value
                     best_move = move
@@ -311,11 +296,11 @@ class Engine:
                 if value < beta:
                     beta = value
                 if value <= alpha:
-                    return value, temp_move
+                    return (value, temp_move)
                 if value < best_value:
                     best_value = value
                     best_move = move
-        return best_value, best_move
+        return (best_value, best_move)
 
     @classmethod
     def __search_winning_move(cls, board: Board):
