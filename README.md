@@ -1,5 +1,9 @@
 # Gomoku
 
+Clone repository
+
+`git clone https://github.com/hieunguyen1053/gomoku-ai`
+
 Install all dependencies
 
 `pip install -r requirements.txt`
