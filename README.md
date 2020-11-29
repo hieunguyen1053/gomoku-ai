@@ -1,13 +1,13 @@
 # Gomoku
 
-Để cài thư viện
+Install all dependencies
 
 `pip install -r requirements.txt`
 
-Tuỳ chọn game
+Game options
 
-`game = GomokuUI("Gomoku", 12, GomokuUI.PVP)` để chơi Person vs Person.
+`game = GomokuUI("Gomoku", 12, GomokuUI.PVP)` to play Person vs Person.
 
-`game = GomokuUI("Gomoku", 12, GomokuUI.PVC)` để chơi Person vs Computer.
+`game = GomokuUI("Gomoku", 12, GomokuUI.PVC)` to play Person vs Computer.
 
-`game = GomokuUI("Gomoku", 12, GomokuUI.CVC)` để chơi Computer vs Computer.
+`game = GomokuUI("Gomoku", 12, GomokuUI.CVC)` to play Computer vs Computer.
